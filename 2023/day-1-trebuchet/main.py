@@ -26,8 +26,7 @@ def calculate_calibration_values():
     # Calculate the total_sum by summing all values in the calibration_values list
     total_sum = sum(calibration_values)
 
-    # return total_sum
-    print(calibration_values)
+    return total_sum
 
 
 if __name__ == "__main__":
