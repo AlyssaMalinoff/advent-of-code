@@ -4,10 +4,10 @@ with open("input.txt", "r") as file:
     # print(grid)  # Check if the file content is correctly read into the grid variable
 
 
+# this will give us the coordinates of the first digit of every part number
 def get_coordinate_set(grid):
     coordinate_set = set()
 
-    # this will give us the coordinates of the first digit of every part number
     for r, row in enumerate(grid):
         for c, char in enumerate(row):
             if char.isdigit() or char == ".":
@@ -30,6 +30,7 @@ def get_coordinate_set(grid):
     return coordinate_set
 
 
+# tracks and sums the total of the integers found
 def get_sum_of_part_numbers(grid, coordinate_set):
     number_set = []
 
@@ -47,8 +48,53 @@ def get_sum_of_part_numbers(grid, coordinate_set):
     return sum(number_set)
 
 
+# this will give us the coordinate set for integers adjacent to "*"
+def get_gear_set(grid):
+    total = 0
+
+    for r, row in enumerate(grid):
+        for c, ch in enumerate(row):
+            if ch != "*":
+                continue
+
+            cs = set()
+
+            for cr in [r - 1, r, r + 1]:
+                for cc in [c - 1, c, c + 1]:
+                    if (
+                        cr < 0
+                        or cr >= len(grid)
+                        or cc < 0
+                        or cc >= len(grid[cr])
+                        or not grid[cr][cc].isdigit()
+                    ):
+                        continue
+                    while cc > 0 and grid[cr][cc - 1].isdigit():
+                        cc -= 1
+                    cs.add((cr, cc))
+
+            if len(cs) != 2:
+                continue
+
+            ns = []
+
+            for cr, cc in cs:
+                s = ""
+                while cc < len(grid[cr]) and grid[cr][cc].isdigit():
+                    s += grid[cr][cc]
+                    cc += 1
+                ns.append(int(s))
+
+            total += ns[0] * ns[1]
+
+    return total
+
+
 resulting_coordinate_set = get_coordinate_set(grid)
 # print(resulting_coordinate_set)
 
 part_1_result = get_sum_of_part_numbers(grid, resulting_coordinate_set)
 print(f"Part One: {part_1_result}")
+
+part_2_result = get_gear_set(grid)
+print(f"Part Two:{part_2_result}")
