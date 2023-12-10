@@ -69,58 +69,41 @@ def compare_numbers(cards_data):
     print(f"Summary: {game_point_total}")
     print(f"Part 1: {overall_point_totals}")
 
-    return (
-        overall_point_totals,
-        matching_numbers,
-    )
-    return matches
+    return overall_point_totals, matching_numbers, matches
     return number_of_matches
+    return matches
 
 
-def process_cards(card_data):
+def process_cards_with_copies(input_text):
     card_copies = {}
 
-    for card_number, data in cards_data.items():
-        matches = len(
-            set(data["winning_numbers"]).intersection(set(data["my_numbers"]))
-        )
+    # this reads the sample input, iterates over each line to give an index to the line number (game) and the content of that game
+    for line_number, line in enumerate(input_text.strip().split("\n")):
+        # this initializes every game in the dictionary to be at least 1, because we have 1 copy of every original card
+        if line_number not in card_copies:
+            card_copies[line_number] = 1
 
-        if card_num not in card_data:
-            continue
+        # Takes the winning/my numbers from the line
+        line_content = line.split(":")[1].strip()
+        # creates two seperate lists that strip the number sequences and adds them to the lists as ints
+        winning_numbers, my_numbers = [
+            list(map(int, number_sequence.split()))
+            for number_sequence in line_content.split(" | ")
+        ]
+        # Computes the number of matches between winning_numbers and my_numbers
+        matches = sum(number in winning_numbers for number in my_numbers)
 
-        matches = len(
-            set(card_data[card_num]["winning_numbers"]).intersection(
-                set(card_data[card_num]["my_numbers"])
+        for next_card_number in range(line_number + 1, line_number + matches + 1):
+            card_copies[next_card_number] = (
+                card_copies.get(next_card_number, 1) + card_copies[line_number]
             )
-        )
 
-        if card_num not in card_copies:
-            card_copies[card_num] = 0
+    total_cards = sum(card_copies.values())
+    print(f"Part 2: {total_cards}")
 
-        for next_card in range(i + 1, 219):
-            if next_card not in card_copies:
-                card_copies[next_card] = 0
-
-            copies_to_add = card_copies[card_num] if matches > 0 else 0
-            card_copies[next_card] += copies_to_add
-
-            if matches == 0 or card_copies[next_card] == 0:
-                break
-
-    card_copies = {card: copies for card, copies in card_copies.items() if copies > 0}
-    return card_copies
-
-
-def add_copies():
-    card_pile = {}
-
-
-# Use your existing functions to get card data
-input_text = read_input_from_file("input.txt")
-cards_data = split_games(input_text)
+    return total_cards
 
 
 cards_data = split_games(input_text)
 game_points = compare_numbers(cards_data)
-result = process_cards(cards_data)
-print(result)
+cards_after_copies = process_cards_with_copies(input_text)
