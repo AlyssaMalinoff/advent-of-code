@@ -1,67 +1,28 @@
-# destination range start - source range start - range length
-# Any source numbers that aren't mapped correspond to the same destination number. So, seed number 10 corresponds to soil number 10.
 
-input = """
-seeds: 79 14 55 13
+def map_seeds_through_all_mappings(input):
+    with open("input.txt", 'r') as file:
+        input = file.read()
 
-seed-to-soil map:
-50 98 2
-52 50 48
+    seeds, *blocks = input.split("\n\n")
+    seeds = list(map(int, seeds.split(":")[1].split()))
 
-soil-to-fertilizer map:
-0 15 37
-37 52 2
-39 0 15
+    for block in blocks:
+        seed_ranges = []
+        for line in block.splitlines()[1:]:
+            seed_ranges.append(list(map(int, line.split())))
+        mapped_seeds = []
+        for x in seeds:
+            for first, last, range_length in seed_ranges:
+                if last <= x < last + range_length:
+                    mapped_seeds.append(x - last + first)
+                    break
+            else:
+                mapped_seeds.append(x)
+        seeds = mapped_seeds
 
-fertilizer-to-water map:
-49 53 8
-0 11 42
-42 0 7
-57 7 4
+    return seeds
 
-water-to-light map:
-88 18 7
-18 25 70
-
-light-to-temperature map:
-45 77 23
-81 45 19
-68 64 13
-
-temperature-to-humidity map:
-0 69 1
-1 0 69
-
-humidity-to-location map:
-60 56 37
-56 93 4
-"""
-
-
-# map:
-# seed-to-soil map:
-# 50 98 2
-# 52 50 48
-
-# map = [50, 98, 2]
-# for step in map[2]:
-#     map[1] + [step - 1] maps to map[0] + [step -1]
-
-# 98 -> 50
-# 99 -> 51
-
-
-class Mapping:
-    def ___init___(self, destinationStart, sourceStart, length):
-        self.destinationStart = destinationStart
-        self.sourceStart = sourceStart
-        self.length = length
-
-
-def parse_mapping_data(input):
-    mappings = []
-    for row in input:
-        mapping = Mapping(int(row[0]), int(row[1]), int(row[2]))
-        mappings.append(mapping)
-
-    return mappings
+# Use the function
+final_seeds = map_seeds_through_all_mappings("input.txt")
+print(f"Final Seeds: {final_seeds}")
+print(f"Part 1: {min(final_seeds)}")
