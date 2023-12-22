@@ -1,3 +1,8 @@
+"""
+I ended up doing something probably way less intuitive and way more difficult than it needed to be. The problem I ran into with the mappings was there were certain edge cases where letters 
+in the numeral number overlapped with another numeral number (like twone or eighthree) so instead of finding a way to eliminate those I just made a mapping for each of those edge-cases where 
+first or last letter of a numberal number overlapped with another. I feel a lot more dumb but also a lot more resourceful now. 
+"""
 def convert_text_numbers(string):
     word_to_digit = {
         "oneight": "18",

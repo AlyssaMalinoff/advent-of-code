@@ -1,31 +1,32 @@
-inputs, *blocks = open("input.txt").read().split("\n\n")
+# destination range start - source range start - range length
+# Any source numbers that aren't mapped correspond to the same destination number. So, seed number 10 corresponds to soil number 10.
 
-inputs = list(map(int, inputs.split(":")[1].split()))
+with open("input.txt", "r") as file:
+    input_text = file.read()
 
-seed_ranges = []
 
-for i in range(0, len(inputs), 2):
-    seed_ranges.append((inputs[i], inputs[i] + inputs[i + 1]))
+class Mapping:
+    def ___init___(self, destinationStart, sourceStart, length):
+        self.destinationStart = destinationStart
+        self.sourceStart = sourceStart
+        self.length = length
 
-for block in blocks:
-    block_ranges = []
-    for line in block.splitlines()[1:]:
-        block_ranges.append(list(map(int, line.split())))
-    new_seed_ranges = []
-    while len(seed_ranges) > 0:
-        seed_start, seed_end = seed_ranges.pop()
-        for block_start, range_start, range_length in block_ranges:
-            overlap_start = max(seed_start, range_start)
-            overlap_end = min(seed_end, range_start + range_length)
-            if overlap_start < overlap_end:
-                new_seed_ranges.append((overlap_start - range_start + block_start, overlap_end - range_start + block_start))
-                if overlap_start > seed_start:
-                    seed_ranges.append((seed_start, overlap_start))
-                if seed_end > overlap_end:
-                    seed_ranges.append((overlap_end, seed_end))
-                break
-        else:
-            new_seed_ranges.append((seed_start, seed_end))
-    seed_ranges = new_seed_ranges
 
-print(min(seed_ranges)[0])
+def parse_mapping_data(input):
+    initial_mappings = []
+    for row in input:
+        mapping = Mapping(int(row[0]), int(row[1]), int(row[2]))
+        initial_mappings.append(mapping)
+
+    return initial_mappings
+
+
+def create_mappings(initial_mappings):
+    mappings = {}
+    for map in initial_mappings:
+        for i in range(initial_mappings.length):
+            source = initial_mappings.sourceStart + i
+            destination = initial_mappings.destinationStart + i
+            mappings[source] = destination
+
+    return mappings
