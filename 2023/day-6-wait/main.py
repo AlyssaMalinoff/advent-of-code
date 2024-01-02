@@ -1,7 +1,7 @@
 with open("input.txt", "r") as file:
     input_text = file.read().splitlines()
 
-times, distances = [list(map(int, line.split(":")[1].split())) for line in input_text if ":" in line]
+times, distances = [list(map(int, ["".join(line.split(":")[1].split())])) for line in input_text if ":" in line]
 
 total_record = 1
 
